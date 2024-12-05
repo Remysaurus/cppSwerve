@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/SwerveModule.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <Constants.h>
 
 SwerveModule::SwerveModule(
@@ -79,10 +80,13 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state) {
     double pid = m_drivePIDController->Calculate((GetDriveVelocity().value()), state.speed.value());
     
     m_driveMotor->Set(ff + pid);
+    //m_driveMotor->Set(0.25);
     m_turnMotor->Set(m_turnPIDController->Calculate(((GetTurnPosition().Radians().value()), (state.angle.Radians().value()))));
+    //m_turnMotor->Set(m_turnPIDController->Calculate(((GetTurnPosition().Radians().value()), 0)));
 }
 
 
 
 // This method will be called once per scheduler run
-void SwerveModule::Periodic() {}
+void SwerveModule::Periodic() {  
+}

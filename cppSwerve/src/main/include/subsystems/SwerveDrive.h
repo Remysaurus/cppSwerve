@@ -37,9 +37,21 @@ public:
 
 private:
 constexpr inline static int kNumModules = 4;
-frc::SwerveDriveKinematics<kNumModules>* kDriveKinematics;
-frc::SwerveDriveOdometry<kNumModules>* m_odo;
-frc::Translation2d* kStartTranslation = new frc::Translation2d{2.0_m, 2.0_m};
+// frontLeft, frontRight, backLeft, backRight
+frc::SwerveDriveKinematics<4> kDriveKinematics{
+  frc::Translation2d{+0.2906_m, +0.2876_m},
+  frc::Translation2d{+0.2896_m, -0.2896_m},
+  frc::Translation2d{-0.2894_m, +0.2884_m},
+  frc::Translation2d{-0.2884_m, -0.2926_m}
+};
+frc::Rotation2d zero{0_rad};
+frc::SwerveModulePosition position;
+wpi::array<frc::SwerveModulePosition, 4> positions {position, position, position, position};
+frc::Translation2d kStartTranslation{2.0_m, 2.0_m};
+frc::Rotation2d kStartRotation{0.0_rad};
+frc::Pose2d kStartPose {kStartTranslation, kStartRotation};
+
+frc::SwerveDriveOdometry<4> m_odo {kDriveKinematics, zero, positions, kStartPose};
 
 
 SwerveModule* m_frontLeft;
@@ -70,6 +82,8 @@ void ResetPose(frc::Pose2d pose);
 frc::ChassisSpeeds GetChassisSpeeds();
 
 void DriveRobotRelative(frc::ChassisSpeeds speeds);
+
+frc2::InstantCommand* resetHeadingCommand = new frc2::InstantCommand{[this]() {return this->GetPose();}}; 
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.

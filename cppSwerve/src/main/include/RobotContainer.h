@@ -30,6 +30,6 @@ class RobotContainer {
       OperatorConstants::kDriverControllerPort};
 
   // The robot's subsystems are defined here...
-
+  SwerveDrive* m_swerve;
   void ConfigureBindings();
 };

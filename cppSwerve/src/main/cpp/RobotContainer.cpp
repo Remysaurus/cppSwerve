@@ -11,7 +11,8 @@
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
-  
+
+  m_swerve = new SwerveDrive();
   // Configure the button bindings
   ConfigureBindings();
 }
