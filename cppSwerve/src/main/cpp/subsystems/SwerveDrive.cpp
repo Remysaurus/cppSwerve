@@ -20,7 +20,7 @@ SwerveDrive::SwerveDrive() {
     constexpr std::array<int, kNumModules> kTurnEncoderPorts = {9, 7, 8, 6};
     constexpr std::array<double, kNumModules> kTurnEncoderOffsets = {
         0,
-        0,
+        0.25,
         0, 
         0
     };
@@ -35,7 +35,8 @@ SwerveDrive::SwerveDrive() {
         kTurnEncoderPorts[0],
         kTurnEncoderOffsets[0],
         kDriveReverseds[0],
-        kTurnReverseds[0]
+        kTurnReverseds[0],
+        "frontLeft"
     );
     m_frontRight = new SwerveModule(
         kDriveMotorIDs[1],
@@ -43,7 +44,8 @@ SwerveDrive::SwerveDrive() {
         kTurnEncoderPorts[1],
         kTurnEncoderOffsets[1],
         kDriveReverseds[1],
-        kTurnReverseds[1]
+        kTurnReverseds[1],
+        "frontRight"
     );
     m_backLeft = new SwerveModule(
         kDriveMotorIDs[2],
@@ -51,7 +53,8 @@ SwerveDrive::SwerveDrive() {
         kTurnEncoderPorts[2],
         kTurnEncoderOffsets[2],
         kDriveReverseds[2],
-        kTurnReverseds[2]
+        kTurnReverseds[2],
+        "backLeft"
     );
     m_backRight = new SwerveModule(
         kDriveMotorIDs[3],
@@ -59,7 +62,8 @@ SwerveDrive::SwerveDrive() {
         kTurnEncoderPorts[3],
         kTurnEncoderOffsets[3],
         kDriveReverseds[3],
-        kTurnReverseds[3]
+        kTurnReverseds[3],
+        "backRight"
     );
 
     std::cout << "modules" << std::endl;
@@ -94,37 +98,35 @@ SwerveDrive::SwerveDrive() {
     );
     ResetHeading();
     m_odo.ResetPosition(GetAngle(), GetPositions(), kStartPose);
-    std::cout << "AutoBuilds" << std::endl;
     
 }
 
 frc::Rotation2d SwerveDrive::GetAngle() {
-    units::angle::radian_t rad{std::remainder(m_imu->GetAngle() * -1, 360)};
-    frc::Rotation2d rotation{rad};
-    return rotation;
+    units::angle::degree_t degree{std::remainder(m_imu->GetAngle() * -1, 360)};
+    angle = degree;
+    return angle;
 }
+
 
 void SwerveDrive::ResetHeading() {
     m_imu->Reset();
 }
 
-void SwerveDrive::ImuBoot() {
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    ResetHeading();
-}
-
 wpi::array<frc::SwerveModulePosition, 4> SwerveDrive::GetPositions() {
-    wpi::array<frc::SwerveModulePosition, 4> positions {
-        m_frontLeft->GetPosition(),
-        m_frontRight->GetPosition(),
-        m_backLeft->GetPosition(),
-        m_backRight->GetPosition()
-    };
+    positions[0] = m_frontLeft->GetPosition();
+    positions[1] = m_frontRight->GetPosition();
+    positions[2] = m_backLeft->GetPosition();
+    positions[3] = m_backRight->GetPosition();
     return positions;
 };
 
 frc::Pose2d SwerveDrive::GetPose() {
-    return m_odo.GetPose();
+    pose = m_odo.GetPose();
+    return pose;
+}
+
+void SwerveDrive::ResetPose() {
+    m_odo.ResetPosition(GetAngle(), GetPositions(), kStartPose);
 }
 
 void SwerveDrive::ResetPose(frc::Pose2d pose) {
@@ -132,7 +134,7 @@ void SwerveDrive::ResetPose(frc::Pose2d pose) {
 }
 
 frc::ChassisSpeeds SwerveDrive::GetChassisSpeeds() {
-    frc::ChassisSpeeds speeds {kDriveKinematics.ToChassisSpeeds(
+    speeds = {kDriveKinematics.ToChassisSpeeds(
         m_frontLeft->GetState(),
         m_frontRight->GetState(),
         m_backLeft->GetState(),
@@ -142,7 +144,7 @@ frc::ChassisSpeeds SwerveDrive::GetChassisSpeeds() {
 }
 
 void SwerveDrive::DriveRobotRelative(frc::ChassisSpeeds speeds) {
-     wpi::array<frc::SwerveModuleState, 4> states {kDriveKinematics.ToSwerveModuleStates(speeds)};
+    states = {kDriveKinematics.ToSwerveModuleStates(speeds)};
     //speeds = frc::ChassisSpeeds{5_mps, 0_mps, 0_rad_per_s};
     kDriveKinematics.DesaturateWheelSpeeds(&states, SwerveModule::kDriveMaxSpeed);
     m_frontLeft->SetDesiredState(states[0]);
@@ -177,4 +179,5 @@ void SwerveDrive::Periodic() {
 
 
     SmartDashboard::PutData("Swerve/Odo/ResetHeading", resetHeadingCommand);
+    SmartDashboard::PutData("Swerve/Odo/ResetPose", resetPoseCommand);
 }

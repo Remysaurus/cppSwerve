@@ -12,7 +12,8 @@ SwerveModule::SwerveModule(
     int turnEncoderPort, 
     double turnEncoderOffset, 
     bool driveInverted, 
-    bool turnInverted) {
+    bool turnInverted,
+    std::string moduleID) {
         m_driveMotor = new ctre::phoenix6::hardware::TalonFX{driveMotorID};
         ctre::phoenix6::configs::TalonFXConfiguration driveConfig{};
         driveConfig.MotorOutput.Inverted = driveInverted;
@@ -31,6 +32,8 @@ SwerveModule::SwerveModule(
         m_drivePIDController = new frc::PIDController{kPDrive, kIDrive, kDDrive};
         m_turnPIDController = new frc::PIDController{kPTurn, kITurn, kDTurn};
         m_turnPIDController->EnableContinuousInput(-std::numbers::pi, +std::numbers::pi);
+        
+        m_moduleID = moduleID;
 
     }
 
@@ -82,6 +85,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state) {
     m_driveMotor->Set(ff + pid);
     //m_driveMotor->Set(0.25);
     m_turnMotor->Set(m_turnPIDController->Calculate(((GetTurnPosition().Radians().value()), (state.angle.Radians().value()))));
+    frc::SmartDashboard::PutNumber("Swerve/Odo/" + m_moduleID, state.angle.Degrees().value());
     //m_turnMotor->Set(m_turnPIDController->Calculate(((GetTurnPosition().Radians().value()), 0)));
 }
 

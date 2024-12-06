@@ -36,7 +36,8 @@ class SwerveModule : public frc2::SubsystemBase {
     int turnEncoderPort, 
     double turnEncoderOffset, 
     bool driveInverted, 
-    bool turnInverted);
+    bool turnInverted,
+    std::string moduleID);
 
   units::length::meter_t GetDrivePosition();
 
@@ -80,9 +81,11 @@ class SwerveModule : public frc2::SubsystemBase {
   inline static constexpr double kIDrive = 1.7;
   inline static constexpr double kDDrive = 0.0;
 
-  inline static constexpr double kPTurn = 0.5;
+  inline static constexpr double kPTurn = 0.4;
   inline static constexpr double kITurn = 0.0;
   inline static constexpr double kDTurn = 0.0;
+
+  std::string m_moduleID;
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
