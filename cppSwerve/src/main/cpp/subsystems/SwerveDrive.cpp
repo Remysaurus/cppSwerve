@@ -12,8 +12,6 @@
 SwerveDrive::SwerveDrive() {
     std::cout << "Hello World" << std::endl;
 
-    
-
 
     
 
@@ -95,12 +93,13 @@ SwerveDrive::SwerveDrive() {
         this
     );
     ResetHeading();
+    m_odo.ResetPosition(GetAngle(), GetPositions(), kStartPose);
     std::cout << "AutoBuilds" << std::endl;
     
 }
 
 frc::Rotation2d SwerveDrive::GetAngle() {
-    units::angle::radian_t rad{std::remainder(m_imu->GetAngle() * -1, std::numbers::pi)};
+    units::angle::radian_t rad{std::remainder(m_imu->GetAngle() * -1, 360)};
     frc::Rotation2d rotation{rad};
     return rotation;
 }

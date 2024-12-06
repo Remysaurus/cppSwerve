@@ -63,8 +63,8 @@ SwerveModule** m_modules;
 
 inline static AHRS* m_imu = new AHRS(frc::I2C::Port::kMXP); //check if this is right
 
-pathplanner::PIDConstants kPPTranslationPID{5.0};
-pathplanner::PIDConstants kPPRotationPID{5.0};
+pathplanner::PIDConstants kPPTranslationPID{0.75};
+pathplanner::PIDConstants kPPRotationPID{4};
 inline static constexpr units::length::meter_t kDriveRadius{0.408};
 
 frc::Rotation2d GetAngle();
