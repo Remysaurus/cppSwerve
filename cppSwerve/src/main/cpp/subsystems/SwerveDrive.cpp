@@ -101,6 +101,13 @@ SwerveDrive::SwerveDrive() {
     
 }
 
+void SwerveDrive::Stop() {
+    m_frontLeft->Stop();
+    m_frontRight->Stop();
+    m_backLeft->Stop();
+    m_backRight->Stop();
+}
+
 frc::Rotation2d SwerveDrive::GetAngle() {
     units::angle::degree_t degree{std::remainder(m_imu->GetAngle() * -1, 360)};
     angle = degree;

@@ -27,6 +27,7 @@ class SwerveDrive : public frc2::SubsystemBase {
 
 
 public:
+  friend class JoystickDrive;
   SwerveDrive();
 
 
@@ -76,6 +77,7 @@ frc::ChassisSpeeds speeds;
 frc::SwerveModuleState state;
 wpi::array<frc::SwerveModuleState, 4> states{state, state, state, state};
 
+void Stop();
 
 frc::Rotation2d GetAngle();
 

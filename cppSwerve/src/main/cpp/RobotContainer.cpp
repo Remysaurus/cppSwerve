@@ -5,14 +5,18 @@
 #include "RobotContainer.h"
 
 #include <frc2/command/button/Trigger.h>
-
-#include "commands/Autos.h"
-#include "commands/ExampleCommand.h"
+#include "commands/JoystickDrive.h"
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
   m_swerve = new SwerveDrive();
+  
+  m_swerve->SetDefaultCommand(JoystickDrive(m_swerve, 
+    [this]() {return -m_driverController.GetRawAxis(1);}, 
+    [this]() {return -m_driverController.GetRawAxis(0);},
+    [this]() {return -m_driverController.GetRawAxis(4);}
+    ));
   // Configure the button bindings
   ConfigureBindings();
 }
